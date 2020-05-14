@@ -5,12 +5,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Archive</title>
+    <title>socket.io学习小结 - 风吟茶楼</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    
+    <meta name="description" content="杂谈终于熬到了周末，文档康乐好几天了，还摘抄整理了文档内容来熟悉方法。但是果然还是老话说的好，实践出真知。和server端通信成功花了两天时间。顺便实践了下vue，之后准备做下vue+socket.,"> 
     <meta name="author" content="Cvood"> 
     <link rel="alternative" href="atom.xml" title="风吟茶楼" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -33,59 +33,93 @@
 <body class="loading">
     <span id="config-title" style="display:none">风吟茶楼</span>
     <div id="loader"></div>
-    <div id="single" class="page">
-    <div id="top">
-        <a class="iconfont icon-left image-icon" href="javascript:history.back()"></a>
-    </div>
-    <div class="section">
-        <div class="article">
-            <div class="main">
-                <div class="content">
-                    <div class="timeline">
-                      <h2 class="timeline-title">归档: 5篇</h2><hr>
-                      
-                      
-                        
-                          <h3 class="timeline-subtitle">2019</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2019-09-09</time>
-                          <a target="_self" href="/2019/09/09/socketio-learned/">socket.io学习小结</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2019-09-01</time>
-                          <a target="_self" href="/2019/09/01/socket-io-learning/">Socket.io 学习</a>
-                        </div>
-                      
-                        
-                          <h3 class="timeline-subtitle">2018</h3>
-                        
-                        <div class="timeline-item">
-                          <time>2018-07-24</time>
-                          <a target="_self" href="/2018/07/24/werewolf/">狼人杀 大致思路</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2018-06-22</time>
-                          <a target="_self" href="/2018/06/22/ccp_install_data/">CCP Install Data</a>
-                        </div>
-                      
-                        
-                        <div class="timeline-item">
-                          <time>2018-02-24</time>
-                          <a target="_self" href="/2018/02/24/BulletJourney/">Bullet journey 电子版</a>
-                        </div>
-                      
-                    </div>
-                </div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://cvood.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">socket.io学习小结</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
             </div>
+            <div id="qr"></div>
         </div>
     </div>
+    <div class="scrollbar"></div>
 </div>
 
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">socket.io学习小结</h1>
+        <div class="stuff">
+            <span>九月 09, 2019</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h1 id="杂谈"><a href="#杂谈" class="headerlink" title="杂谈"></a>杂谈</h1><p>终于熬到了周末，文档康乐好几天了，还摘抄整理了文档内容来熟悉方法。<br>但是果然还是老话说的好，实践出真知。和server端通信成功花了两天时间。<br>顺便实践了下vue，之后准备做下vue+socket.io+flask的聊天室看看。</p>
+<h1 id="正片"><a href="#正片" class="headerlink" title="正片"></a>正片</h1><h2 id="前端遇上的问题"><a href="#前端遇上的问题" class="headerlink" title="前端遇上的问题"></a>前端遇上的问题</h2><p>因为只是测试，觉得两天也做不出什么来，所以没有做完整的页面，想靠console来验证有没有成功通讯。<br>但是一直没有收到返回信息，就还是个页面加了两个元素，顺便使用一下vue。</p>
+<p>遇上的主要几个问题：</p>
+<ol>
+<li><p>JavaScript文件导入顺序问题：</p>
+<p> 刚开始一直会报not define 错误，因为导入的包要按依赖关系按顺序的导入，python好像没有这问题，可能是python包是自己导入依赖的，所以不会碰上这种问题。</p>
+</li>
+<li><p>函数不触发：</p>
+<p> JavaScript 函数定义后，不能直接被触发，或是绑定事件，或是放到jQuery的ready事件里才能被触发。<br> python只要在root直接写下函数名，运行时会直接调用。js不知道有米有init函数。</p>
+</li>
+<li><p>函数没在使用前定义：</p>
+<p> 同样是not define ，这个是在调整排版的时候，定义的变量被移动到了使用它的函数下面。</p>
+</li>
+<li><p>Vue的模板不显示：</p>
+<p> 测试的时候，vue的模板一直不被渲染。突然想起来flask的模板jinja2和vue的模板`是冲突的，修改了jinja2的模板为[[ ]]，总算是渲染出来了。</p>
+</li>
+<li><p>vue 传值不成功：</p>
+<p> 在vue中定义里 <code>message</code>变量，但是使用app.message赋值总是没有反应。最后把socketio.on（）和vue都放到<code>$(document)。read（）&amp;#123; &amp;#125;</code>方法里成功了。可能是域的关系。</p>
+</li>
+</ol>
+<p>复盘就先这些，想起来别的在更新吧~</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
 </body>
 
 

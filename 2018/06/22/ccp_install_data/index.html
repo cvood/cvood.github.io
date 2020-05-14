@@ -5,12 +5,14 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hello World - 风吟茶楼</title>
+    <title>CCP Install Data - 风吟茶楼</title>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="google" content="notranslate" />
     <meta name="keywords" content="Fechin,"> 
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any pr,"> 
+    <meta name="description" content="一、AQM首先将/ccp/source/aqm/和txt/下的文件放入同目录下的bak/中
+进入/ccp/ftp/aqm选择周数最新的文件夹进入。
+将Master??.rar与Prg??.rar解压,"> 
     <meta name="author" content="Cvood"> 
     <link rel="alternative" href="atom.xml" title="风吟茶楼" type="application/atom+xml"> 
     <link rel="icon" href="/img/favicon.png"> 
@@ -38,7 +40,7 @@
     <div class="bar" style="width: 0;"></div>
     <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://cvood.github.io"></a>
     <div title="播放/暂停" class="iconfont icon-play"></div>
-    <h3 class="subtitle">Hello World</h3>
+    <h3 class="subtitle">CCP Install Data</h3>
     <div class="social">
         <div>
             <div class="share">
@@ -53,26 +55,60 @@
     <div class="section">
         <div class="article">
     <div class='main'>
-        <h1 class="title">Hello World</h1>
+        <h1 class="title">CCP Install Data</h1>
         <div class="stuff">
-            <span>五月 13, 2020</span>
+            <span>六月 22, 2018</span>
             
 
         </div>
         <div class="content markdown">
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="noopener">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="noopener">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
+            <h2 id="一、AQM"><a href="#一、AQM" class="headerlink" title="一、AQM"></a>一、AQM</h2><p>首先将<code>/ccp/source/aqm/</code>和<code>txt/</code>下的文件放入同目录下的<code>bak/</code>中</p>
+<p>进入<code>/ccp/ftp/aqm</code>选择周数最新的文件夹进入。</p>
+<p>将<code>Master??.rar</code>与<code>Prg??.rar</code>解压。放入<code>/ccp/souce/aqm/txt/</code>。</p>
+<p>将<code>PRN??.RAR</code>,<code>TV??.RAR</code>,<code>RD??.RAR</code>解压放入<code>/ccp/source/aqm/</code>中。</p>
+<p>rar解压：</p>
+<blockquote>
+<p>rar e filename.rar</p>
+</blockquote>
+<p>运行</p>
+<blockquote>
+<p>python /ccp/srv/data/loadmaster2mysql.py aqm</p>
+</blockquote>
+<p>然后运行</p>
+<blockquote>
+<p>python /ccp/srv/data/aqm2fromat.py</p>
+<p>python /ccp/srv/data/loadaqmspot2ice.py</p>
+</blockquote>
+<h2 id="二、CTR"><a href="#二、CTR" class="headerlink" title="二、CTR"></a>二、CTR</h2><p>同AQM做好备份。</p>
+<p>找到<code>/ccp/ftp/ctr</code>下最新的month 和 week 的zip文件并解压。</p>
+<p>选择两个中的最新的那个的Common 内文件移动到<code>/ccp/source/ctr/common</code>中，并删除带有<code>_</code>的文件，运行：</p>
+<blockquote>
+<p>python /ccp/srv/data/loadmaster2mysql.py</p>
+</blockquote>
+<p>移动<code>/ccp/ftp/ctr/</code>下<code>Month</code>和<code>Week</code>中<code>Data</code>内的文件移动到<code>/ccp/source/ctr/</code>下,进行转格式，再插入数据库。</p>
+<p>转格式和插入数据库要对文件进行相应修稿。</p>
+<p>运行：</p>
+<blockquote>
+<p>python /ccp/srv/data/loadctrspots2ice.py</p>
+</blockquote>
+<p>转格式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># loadctrspots2ice.py</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> glob.glob(CTR_DBFPATH +<span class="string">r'/*.dbf'</span>):</span><br><span class="line">        <span class="keyword">print</span> f</span><br><span class="line">        dbf2csv(f,CTR_CSVPATH)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> glob.glob(CTR_CSVPATH +<span class="string">r'/*.csv'</span>):</span><br><span class="line">        <span class="keyword">print</span> f</span><br><span class="line">        csv2formatforctr(f)</span><br><span class="line"><span class="comment">#    fmt2iceforctr()</span></span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="noopener">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<p>插数据：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># loadctrspots2ice.py</span></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> glob.glob(CTR_DBFPATH +<span class="string">r'/*.dbf'</span>):</span><br><span class="line">        <span class="keyword">print</span> f</span><br><span class="line"><span class="comment">#        dbf2csv(f,CTR_CSVPATH)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> f <span class="keyword">in</span> glob.glob(CTR_CSVPATH +<span class="string">r'/*.csv'</span>):</span><br><span class="line">        <span class="keyword">print</span> f</span><br><span class="line"><span class="comment">#        csv2formatforctr(f)</span></span><br><span class="line">    fmt2iceforctr()</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="noopener">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="noopener">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html" target="_blank" rel="noopener">Deployment</a></p>
+<h2 id="三、CSM"><a href="#三、CSM" class="headerlink" title="三、CSM"></a>三、CSM</h2><p>在本地建立目录，保留历史文件(为了下次知道装数到几号)。</p>
+<p>将<code>/ccp/ftp/csm/</code>下要装的文件下载到本地。然后使用CSMRLD解压工具中的<code>ExtractRLD</code>进行解压。过程中需要解码密码，规则如下：</p>
+<blockquote>
+<p>密码组成规则  “Password: 8324 64231” </p>
+<p>|  |<br>|第二部分数值“64231”奇数位数字：621 </p>
+<p>|<br>|第一部分数值“8324”奇数位数字：82</p>
+<p> |<br>|  第二部分数值“64231”偶数位数字：43</p>
+<p> |<br>|  第一部分数值“8324”奇数位数字：34 </p>
+<p>|<br>|当前日期（如2010/08/19）19日：1*9=09 </p>
+<p>以上五部分合并组成密码：62182433409 </p>
+</blockquote>
+<p>每个压缩包解压出4个文件。将所有文件上传到<code>/ccp/source/csm/</code>下，完成。</p>
 
             <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
             <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">

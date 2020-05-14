@@ -1,0 +1,293 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Socket.io 学习 - 风吟茶楼</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="既然是多人在线游戏，有不可能所有玩家都在玩一局游戏，必然要划分出房间，以团体为单位进行游戏。最初没有考虑到，因为对于在线游戏来说是基本的需求，反而容易被忽略。现在来思考实现觉得不知道该如何实现了。
+,"> 
+    <meta name="author" content="Cvood"> 
+    <link rel="alternative" href="atom.xml" title="风吟茶楼" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">风吟茶楼</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://cvood.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">Socket.io 学习</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">Socket.io 学习</h1>
+        <div class="stuff">
+            <span>九月 01, 2019</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <p>既然是多人在线游戏，有不可能所有玩家都在玩一局游戏，必然要划分出房间，以团体为单位进行游戏。<br>最初没有考虑到，因为对于在线游戏来说是基本的需求，反而容易被忽略。<br>现在来思考实现觉得不知道该如何实现了。</p>
+<h2 id="初期设想"><a href="#初期设想" class="headerlink" title="初期设想"></a>初期设想</h2><p>最开始，以刚入门的人来说，是站在单机单人的角度上的。<br>以上一篇为基础的话，是给每个玩家多分配一个房间ID属性，程序依据房间号处理数据然后返回给玩家。<br>但是，单个程序处理数据太多可能会出现我不可预见的错误（前提要有那么多人用/滑稽）。<br>而且，重点是要做成web应用，如何与玩家交互也是未知领域来的。</p>
+<h2 id="初步解决方案"><a href="#初步解决方案" class="headerlink" title="初步解决方案"></a>初步解决方案</h2><p>因为预定是以微信小程序为载体的，就去看了一下官网文档。<br>发现小程序用了一个叫websocket的前后端交互手段。<br>百度了一下，websocket是html5新提供的功能。可以再前后端之间建立长连接，进行双向实时通讯。</p>
+<p>同时发现了socket.io这个js包，封装了这个功能，可惜方便的使用。因为现在只会一点flask，就看了下，他也有个socketio的插件，可以方便配套使用。<br>还好不需要重新学别的框架。</p>
+<h2 id="JavaScript-socket-io"><a href="#JavaScript-socket-io" class="headerlink" title="JavaScript socket.io"></a>JavaScript socket.io</h2><p>这里摘录一点文档，方便之后使用。</p>
+<ol>
+<li><p>导入js</p>
+<pre><code>&lt;script src=&quot;/socket.io/socket.io.js&quot;&gt;&lt;/script&gt;
+&lt;script&gt;
+    const socket = io(&apos;http://localhost&apos;);
+&lt;/script&gt;</code></pre><p> <code>const socket = io(&#39;http://localhost&#39;);</code></p>
+<p> <code>const</code> 关键词定义常亮，该语句作用是给定建立websocket的链接。</p>
+</li>
+<li><p>自定义<code>path</code></p>
+<pre><code>const socket = io(&apos;http://localhost&apos;, {
+  path: &apos;/myownpath&apos;
+});
+
+// server-side
+const io = require(&apos;socket.io&apos;)({
+  path: &apos;/myownpath&apos;
+});</code></pre></li>
+<li><p>链接一个websocket地址</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">const socket &#x3D; io(&#123;</span><br><span class="line">    autoConnect: false</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; ...</span><br><span class="line">socket.open();</span><br></pre></td></tr></table></figure>
+
+<p> 手动重连</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">socket.on(&#39;disconnect&#39;, () &#x3D;&gt; &#123;</span><br><span class="line">    socket.open();</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>发送消息</p>
+<ul>
+<li><p>socket.emit(eventName[, …args][, ack])</p>
+<ul>
+<li>eventName (String)</li>
+<li>args</li>
+<li>ack (Function)</li>
+<li>Returns Socket</li>
+</ul>
+<p><code>eventName</code> ，str， 设定一个事件名称，用于触发服务端绑定了相同事件名称的函数。<br>例子：</p>
+</li>
+</ul>
+<hr>
+<pre><code>socket.emit(&apos;hello&apos;, &apos;world&apos;);
+socket.emit(&apos;with-binary&apos;, 1, &apos;2&apos;, { 3: &apos;4&apos;, 5: new Buffer(6) });</code></pre><hr>
+<pre><code>socket.emit(&apos;ferret&apos;, &apos;tobi&apos;, (data) =&gt; {
+  console.log(data); // data will be &apos;woot&apos;
+});
+
+// server:
+//  io.on(&apos;connection&apos;, (socket) =&gt; {
+//    socket.on(&apos;ferret&apos;, (name, fn) =&gt; {
+//      fn(&apos;woot&apos;);
+//    });
+//  });</code></pre></li>
+<li><p>监听服务器消息`socket.on(eventName, callback)``</p>
+<ul>
+<li><p>eventName (String)</p>
+</li>
+<li><p>callback (Function)</p>
+</li>
+<li><p>Returns Socket</p>
+<p>给一个<code>event</code>注册事件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">socket.on(&#39;news&#39;, (data) &#x3D;&gt; &#123;</span><br><span class="line">  console.log(data);</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; with multiple arguments</span><br><span class="line">socket.on(&#39;news&#39;, (arg1, arg2, arg3, arg4) &#x3D;&gt; &#123;</span><br><span class="line">  &#x2F;&#x2F; ...</span><br><span class="line">&#125;);</span><br><span class="line">&#x2F;&#x2F; with callback</span><br><span class="line">socket.on(&#39;news&#39;, (cb) &#x3D;&gt; &#123;</span><br><span class="line">  cb(0);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>关闭websocket链接<br><code>socket.close()</code><br> 手动关闭websocket链接</p>
+</li>
+</ol>
+<h2 id="Flask-Socketio"><a href="#Flask-Socketio" class="headerlink" title="Flask-Socketio"></a>Flask-Socketio</h2><p>（以下下内容摘录自：<a href="http://www.jianshu.com/u/a62b187a97e6" target="_blank" rel="noopener">1994宅猫</a>的简书）</p>
+<ol>
+<li><p>初始化<br> 在flask应用中注册socketio插件：</p>
+<pre><code>from flask import Flask, render_template
+from flask_socketio import SocketIO
+
+app = Flask(__name__)
+app.config[&apos;SECRET_KEY&apos;] = &apos;secret!&apos;
+socketio = SocketIO(app)
+
+if __name__ == &apos;__main__&apos;:
+    socketio.run(app)</code></pre></li>
+<li><p>为函数绑定未命名的<code>event</code></p>
+<pre><code>@ socketio.on（&apos;message&apos;）
+def handle_message（message）：
+    print(&apos;received message&apos; + message)</code></pre><p> 自定义命名事件还可以支持多个参数：</p>
+<pre><code>@socketio.on(&apos;my event&apos;)
+def handle_my_custom_event(arg1, arg2, arg3):
+    print(&apos;received args: &apos; + arg1 + arg2 + arg3)</code></pre><p> socketio支持命名空间：</p>
+<pre><code>@socketio.on(&apos;my event&apos;, namespace=&apos;/test&apos;)
+def handle_my_custom_namespace_event(json):
+    print(&apos;received json: &apos; + str(json))</code></pre><p> 我觉得这个可以解决游戏房间的建立问题。<br> 一个房间定义为一个namespace，flask会统一收发消息到这个namespace的所有连接上。</p>
+</li>
+<li><p>发送消息</p>
+<pre><code>@socketio.on(&apos;message&apos;)
+def handle_message(message):
+    send(message, namespace=&apos;/chat&apos;)
+
+@socketio.on(&apos;my event&apos;)
+def handle_my_custom_event(json):
+    emit(&apos;my response&apos;, json, namespace=&apos;/chat&apos;)</code></pre><p> namespace是可选参数，为赋值是，send（）和emit（）会发送消息到装饰器定义的namespace中，如果赋值，则会发送到赋值的namespace中。</p>
+</li>
+<li><p>房间（脸被打的啪啪响）</p>
+<p> flask-socketio中提供了<code>join_room()</code>和<code>leave_room</code>函数来实现加入房间和离开房间这种概念。<br> 每个socket连接到app是，都会被分配一个个人房间，以连接的会话ID命名。可用request.sid获取。</p>
+<p> 当给<code>send()</code>和<code>emit（）</code>传入一个room参数后，消息将会被广播到该房间的所有成员。</p>
+<p> from flask_socketio import join_room, leave_room</p>
+<pre><code>@socketio.on(&apos;join&apos;)
+def on_join(data):
+    username = data[&apos;username&apos;]
+    room = data[&apos;room&apos;]
+    join_room(room)
+    send(username + &apos; has entered the room.&apos;, room=room)
+
+@socketio.on(&apos;leave&apos;)
+def on_leave(data):
+    username = data[&apos;username&apos;]
+    room = data[&apos;room&apos;]
+    leave_room(room)
+    send(username + &apos; has left the room.&apos;, room=room)</code></pre></li>
+</ol>
+<hr>
+<p>回去看了一眼 JavaScript的socketio的文档，以为之前英文太多就不高兴看了的后面的内容，也有room的内容。<br>他是针对namespace操作的好像，先写到这里，等下再好好看下，room部分前后端是怎么配合的。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>

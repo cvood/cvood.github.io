@@ -1,0 +1,306 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>狼人杀 大致思路 - 风吟茶楼</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="大致流程
+玩家玩家扮演三种角色，普通村民、狼人、特殊职业（神）。村民只能投票，狼人可以在夜间杀人，神可以再夜晚发动各种特殊能力。
+village
+属性
+id
+role
+alive
+good
+poli,"> 
+    <meta name="author" content="Cvood"> 
+    <link rel="alternative" href="atom.xml" title="风吟茶楼" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">风吟茶楼</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://cvood.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">狼人杀 大致思路</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">狼人杀 大致思路</h1>
+        <div class="stuff">
+            <span>七月 24, 2018</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h2 id="大致流程"><a href="#大致流程" class="headerlink" title="大致流程"></a>大致流程</h2><p><img src="http://oy7tdj2ri.bkt.clouddn.com/%E7%8B%BC%E4%BA%BA%E6%9D%80%E6%B5%81%E7%A8%8B%E5%9B%BE.png" alt=""></p>
+<h2 id="玩家"><a href="#玩家" class="headerlink" title="玩家"></a>玩家</h2><p>玩家扮演三种角色，普通村民、狼人、特殊职业（神）。<br>村民只能投票，狼人可以在夜间杀人，神可以再夜晚发动各种特殊能力。</p>
+<h3 id="village"><a href="#village" class="headerlink" title="village"></a>village</h3><ul>
+<li>属性<ul>
+<li>id</li>
+<li>role</li>
+<li>alive</li>
+<li>good</li>
+<li>police</li>
+</ul>
+</li>
+<li>方法<ul>
+<li>vote</li>
+</ul>
+</li>
+</ul>
+<h3 id="werewolf"><a href="#werewolf" class="headerlink" title="werewolf"></a>werewolf</h3><ul>
+<li>属性<ul>
+<li>vilage.属性</li>
+</ul>
+</li>
+<li>方法<ul>
+<li>vote</li>
+<li>werewolf vote</li>
+</ul>
+</li>
+</ul>
+<h3 id="seer"><a href="#seer" class="headerlink" title="seer"></a>seer</h3><ul>
+<li>属性<ul>
+<li>village。属性</li>
+</ul>
+</li>
+<li>方法<ul>
+<li>vote</li>
+<li>查验身份</li>
+</ul>
+</li>
+</ul>
+<h2 id="开始游戏"><a href="#开始游戏" class="headerlink" title="开始游戏"></a>开始游戏</h2><h3 id="游戏房间"><a href="#游戏房间" class="headerlink" title="游戏房间"></a>游戏房间</h3><ul>
+<li><p>属性</p>
+<ul>
+<li>房间号</li>
+<li>player number</li>
+<li>number of each role</li>
+<li>time //记录白天黑夜</li>
+<li>day //记录第几天</li>
+<li>death //角色ID<ul>
+<li>good 好人人数</li>
+<li>evil 坏人人数</li>
+</ul>
+</li>
+<li>alive //存活人数<ul>
+<li>good 好人人数</li>
+<li>evil 坏人人数</li>
+</ul>
+</li>
+<li>number of vote</li>
+</ul>
+</li>
+<li><p>方法</p>
+<ul>
+<li><p>kill vote // 杀死投票后得票数最高的人（村民，狼人投票杀人）</p>
+</li>
+<li><p>change daytime //昼夜交替</p>
+</li>
+<li><p>change day //递增天数</p>
+</li>
+<li><p>result //比较alive 好人和坏人人数，death好人和坏人人数，依据规则判定输赢</p>
+<p>白天和晚上的流程分别作为方法，做成day(),night()</p>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="创建者"><a href="#创建者" class="headerlink" title="创建者"></a>创建者</h3><ul>
+<li>创建房间，获得房间号</li>
+<li>设置房间信息</li>
+<li>推进游戏（提交入夜状态）</li>
+</ul>
+<h3 id="加入者"><a href="#加入者" class="headerlink" title="加入者"></a>加入者</h3><ul>
+<li>获得房间号</li>
+<li>获得身份</li>
+<li>获得房间信息（身份配置，白天黑夜）</li>
+</ul>
+<h3 id="推进游戏"><a href="#推进游戏" class="headerlink" title="推进游戏"></a>推进游戏</h3><p>创建者开始游戏，进入第零夜。<br>依据流程图开始流程。</p>
+<h4 id="夜晚"><a href="#夜晚" class="headerlink" title="夜晚"></a>夜晚</h4><ol>
+<li>特殊神发动技能<ul>
+<li>守卫修改守护人id</li>
+<li>丘比特 恋人id</li>
+<li>野孩子 榜样id</li>
+<li>等等</li>
+</ul>
+</li>
+<li>狼人杀人<ul>
+<li>发起投票</li>
+<li>记录投票数</li>
+<li>比较投票数，投票数高死亡</li>
+<li>计时，超时未投票、投票分散，视为空刀</li>
+<li>修改被杀玩家状态</li>
+</ul>
+</li>
+<li>神发动技能<ul>
+<li>发动技能</li>
+<li>获取相应信息或改变角色状态</li>
+</ul>
+</li>
+<li>夜晚结束</li>
+</ol>
+<h4 id="白天"><a href="#白天" class="headerlink" title="白天"></a>白天</h4><ol>
+<li>昨夜情况<ul>
+<li>死者信息</li>
+<li>分频浪静</li>
+</ul>
+</li>
+<li>发言</li>
+<li>投票<ul>
+<li>记录投票</li>
+</ul>
+<ul>
+<li>比较得票数，产生死者</li>
+<li>警长记1.5票</li>
+</ul>
+</li>
+<li>死者遗言</li>
+<li>白天结束</li>
+</ol>
+<p>以上是大致流程，开始制作后补充细节。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
