@@ -1,0 +1,219 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>一次hive以及yarn config 修改 - 风吟茶楼</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="yarn 修改配置
+yarn.nodemanager.resource.cpu-vcores
+
+yarn.nodemanager.resource.memory-mb
+
+yarn.scheduler,"> 
+    <meta name="author" content="Cvood"> 
+    <link rel="alternative" href="atom.xml" title="风吟茶楼" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">风吟茶楼</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://cvood.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">一次hive以及yarn config 修改</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">一次hive以及yarn config 修改</h1>
+        <div class="stuff">
+            <span>五月 27, 2020</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h2 id="yarn-修改配置"><a href="#yarn-修改配置" class="headerlink" title="yarn 修改配置"></a>yarn 修改配置</h2><ol>
+<li><p>yarn.nodemanager.resource.cpu-vcores</p>
+</li>
+<li><p>yarn.nodemanager.resource.memory-mb</p>
+</li>
+<li><p>yarn.scheduler.minimum-allocation-mb</p>
+</li>
+<li><p>yarn.scheduler.maximum-allocation-mb</p>
+</li>
+</ol>
+<h2 id="疑问配置"><a href="#疑问配置" class="headerlink" title="疑问配置"></a>疑问配置</h2><ol>
+<li>yarn.scheduler.maximum-allocation-vcores</li>
+</ol>
+<h2 id="hive-配置"><a href="#hive-配置" class="headerlink" title="hive 配置"></a>hive 配置</h2><ol>
+<li><p>spark.executor.memory</p>
+</li>
+<li><p>spark.driver.memory</p>
+</li>
+<li><p>spark.yarn.driver.memoryOverhead</p>
+</li>
+<li><p>spark.yarn.executor.memoryOverhead</p>
+</li>
+</ol>
+<h2 id="一些说明"><a href="#一些说明" class="headerlink" title="一些说明"></a>一些说明</h2><p>起因还是hive任务失败，总是修改hive中spark配置无果，考虑yarn中的配置是否会对hive有影响，故有此一试。</p>
+<p>使用的是hive on spark，撇除yarn中mr相关配置，通常优化的选项就是<code>yarn修改配置</code>中的内存相关的3个了。</p>
+<h3 id="网上了解了下3个内存配置的关系："><a href="#网上了解了下3个内存配置的关系：" class="headerlink" title="网上了解了下3个内存配置的关系："></a>网上了解了下3个内存配置的关系：</h3><ol>
+<li>yarn.2 / yarn.3 = container 个数</li>
+<li>yarn.2 为 container 总共可用的物理内存。</li>
+</ol>
+<h2 id="一些自己的理解"><a href="#一些自己的理解" class="headerlink" title="一些自己的理解"></a>一些自己的理解</h2><ol>
+<li>yarn 中配置为可用资源的范围，应用申请资源都在这个范围中。（包括最小值）</li>
+<li>executor container 和 driver container 的内存分别是hive.1+hive.4和hive.2+hive.3</li>
+<li>hive 中配置的 memory 值对应 yarn 流程 driver 向 ResourceManager 申请的资源，而 ResourceManager 会依据 yarn 中设置的资源范围分配资源</li>
+<li>spark 中 executor 为 一个运行 task 任务的进程，container 为 yarn 对资源抽象的一个概念，两者并非一体的。（没有单独学习的弊端，一直使用 spark on yarn 导致概念混淆）</li>
+<li>yarn 中 yarn.scheduler.* 下的配置都是针对单个容器的，而yarn.nodemanager.resource.* 下的配置都是真滴节点整体可用资源的。（之前误触导致将 <code>yarn.nodemanager.resource.vcore</code>设置为4，而hive中 <code>spark.executor.vcore</code> 设置的也是4，是的hive任务只能启动一个容器。）</li>
+</ol>
+<h2 id="一些后续修改"><a href="#一些后续修改" class="headerlink" title="一些后续修改"></a>一些后续修改</h2><ol>
+<li><p>yarn.4 设置成了12G 所以 hive.1 + hive.4 提高到了12，但是出现许多worker dead 的情况，也许是系统占用了resource的资源，也就是yarn并不能吃满yarn.2的24G，于是下调至 hive.1 + hive.4 = 10G，情况好转。</p>
+<pre><code>work01空闲时内存占用14G，其他节点空闲时占用8G，导致resource memory 比较难以协调,work01任然会出现dead的情况。所以单独设定work01的resource memory，预留出足够给系统的memory.</code></pre></li>
+<li><p>查看某个节点的container memory 大小：</p>
+<pre><code>通过work01:8088 yarn web ui 查看任务详情，进入executor页面，查看各个节点container的端口号，在对应节点上执行 `netstat -altnp|grep 端口号` 查看对应pid，早通过top查看pid对应内存消耗即可。</code></pre></li>
+</ol>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
