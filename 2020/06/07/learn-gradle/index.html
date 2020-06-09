@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>学习Gradle - 风吟茶楼</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="Gradle简单的说，就是一个构件工具，与maven一样。Maven 诞生于2004年，Gradle诞生于2009年。Maven 的构件脚本使用的pom文件为xml格式，而Gradle使用的是Gro,"> 
+    <meta name="author" content="Cvood"> 
+    <link rel="alternative" href="atom.xml" title="风吟茶楼" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">风吟茶楼</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://cvood.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">学习Gradle</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">学习Gradle</h1>
+        <div class="stuff">
+            <span>六月 07, 2020</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <h1 id="Gradle"><a href="#Gradle" class="headerlink" title="Gradle"></a>Gradle</h1><p>简单的说，就是一个构件工具，与maven一样。Maven 诞生于2004年，Gradle诞生于2009年。<br>Maven 的构件脚本使用的pom文件为xml格式，而Gradle使用的是Groovy语言。<br>个人本着学新不学旧的原则，但是Maven还是主流，但是xml看起来不明了，而且Forge的官方使用Gradle构件，所以先看Gradle了。  </p>
+<h1 id="构建项目"><a href="#构建项目" class="headerlink" title="构建项目"></a>构建项目</h1><p>官方教程第一篇是介绍了 build scan 这个东西，但是构建的细节原理都不懂的现在讲这些也没用，还是先上手干实际。  </p>
+<h2 id="初始化项目"><a href="#初始化项目" class="headerlink" title="初始化项目"></a>初始化项目</h2><p>建立一个目录作为项目目录，进入：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> mkdir basic-demo</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> basic-demo</span></span><br></pre></td></tr></table></figure>
+<p>运行Gradle初始化命令：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> gradle init</span></span><br></pre></td></tr></table></figure>
+<p>命令行输出BUILD SUCCESS并且在项目根目录下生成Gradle目录结构是才说明初始化完成。  </p>
+<h2 id="Task"><a href="#Task" class="headerlink" title="Task"></a>Task</h2><p>Task 就是一系列任务，在构建前中后都可能用到。可以主动运行，也可以在构建项目等操作时自动触发。<br>一个项目包含一个task的集合，task会实行一些基础操作。<br>Gradle提供了API以创建并配置task。<br>官方例子用一个copy方法，将src中的text文件复制到了dest文件夹中，且dest不存在。在运行task是，dest会被创建。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">task copy(<span class="string">type:</span> Copy, <span class="string">group:</span> <span class="string">"Custom"</span>, <span class="string">description:</span> <span class="string">"Copies sources to the dest directory"</span>) &#123;</span><br><span class="line">    from <span class="string">"src"</span></span><br><span class="line">    into <span class="string">"dest"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行下面语句可以执行task：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew copy</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :copy</span></span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL in 0s</span><br><span class="line">1 actionable task: 1 executed</span><br></pre></td></tr></table></figure>
+<p>Groovy语法独特，函数可以省略括号，让上面语句看起来有点像yml定义参数。</p>
+<p>通过task就可以对项目做一些自定义操作，比如官例的备份source文件，让构建变得灵活。  </p>
+<h2 id="Plugins"><a href="#Plugins" class="headerlink" title="Plugins"></a>Plugins</h2><p>plugins 应该是一个工具的重要部分了，可以表现这个工具的灵活性和可扩展性。<br>Gradle 拥有非常多的plugins，在它的官网上可以搜寻到，比如scala项目要弄到的<code>scala</code> plugin 就是其中之一。<br>plugins 能过扩展API，就像是第三方库一样，官方例子通过映入<code>base</code> plugin 和zip组合，可以创建指定目录的zip档。  </p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">task zip(<span class="string">type:</span> Zip, <span class="string">group:</span> <span class="string">"Archive"</span>, <span class="string">description:</span> <span class="string">"Archives sources in a zip file"</span>) &#123;</span><br><span class="line">    from <span class="string">"src"</span></span><br><span class="line">    archiveFileName = <span class="string">"basic-demo-1.0.zip"</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>plugins 同时也会定义一些task和property</p>
+<h2 id="探索和debug"><a href="#探索和debug" class="headerlink" title="探索和debug"></a>探索和debug</h2><p>通过一些命令可以查看build的信息：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 查看所有task</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew task</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> 查看build的属性</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew properties</span></span><br><span class="line"><span class="meta">#</span><span class="bash"> build scan</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew --scan</span></span><br></pre></td></tr></table></figure>
+<h2 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h2><ul>
+<li>仓库</li>
+<li>依赖<br>还有一些部分没有提到，在之后构建scala library 和java application里应该会有。</li>
+</ul>
+<h1 id="scala-项目"><a href="#scala-项目" class="headerlink" title="scala 项目"></a>scala 项目</h1><h2 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h2><p>gradle 有一个内建插件<code>build init plugin</code> ，他仅包含一个task <code>init</code>，他能生成一个项目，并调用<code>wapper</code>插件生成wapper脚本<code>gradlew</code>。  </p>
+<p>通过 init 生成项目：  </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 创建项目根目录</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> mkdir building-scala-libraries</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> <span class="built_in">cd</span> building-scala-libraries</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#</span><span class="bash"> 运行init task 初始化一个scala项目</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> gradle init --<span class="built_in">type</span> scala-library --package guidesamples</span></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :wrapper</span></span><br><span class="line"></span><br><span class="line">Select build script DSL:</span><br><span class="line">  1: Groovy</span><br><span class="line">  2: Kotlin</span><br><span class="line">Enter selection (default: Groovy) [1..2]</span><br><span class="line"></span><br><span class="line">Project name (default: building-scala-libraries):</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;</span><span class="bash"> Task :init</span></span><br><span class="line">Get more help with your project: https://docs.gradle.org/6.0.1/userguide/scala_plugin.html</span><br><span class="line"></span><br><span class="line">BUILD SUCCESSFUL</span><br><span class="line">2 actionable tasks: 2 executed</span><br></pre></td></tr></table></figure>
+
+<p>运行完成会在目录下生成项目结构和build会用到的配置。</p>
+<h2 id="文件"><a href="#文件" class="headerlink" title="文件"></a>文件</h2><p><code>gradle/wapper/</code>下会生成 wapper files。<br>根目录下则会生成 <code>build.gradle</code> ,<code>setting.gradle</code> 和2个gradlew文件，用于执行Gradle wapper 脚本的命令。分别是bat和sh文件用于win和linux。  </p>
+<p><code>setting.gradle</code>中只有一句有效行:<br><code>rootProject.name = &#39;building-scala-libraries&#39;</code><br>用来分配跟项目名称。  </p>
+<p>build.gradle:</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">'scala'</span></span><br><span class="line"></span><br><span class="line">    id <span class="string">'java-library'</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">repositories &#123;</span><br><span class="line">    jcenter() </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">dependencies &#123;</span><br><span class="line">    implementation <span class="string">'org.scala-lang:scala-library:2.12.9'</span> </span><br><span class="line"></span><br><span class="line">    testImplementation <span class="string">'junit:junit:4.12'</span> </span><br><span class="line">    testImplementation <span class="string">'org.scalatest:scalatest_2.12:3.0.8'</span> </span><br><span class="line"></span><br><span class="line">    testRuntimeOnly <span class="string">'org.scala-lang.modules:scala-xml_2.12:1.2.0'</span> </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编译scala需要依赖到scala-lang:scala-library这个库，这个是之前创建基础库没有提到的dependencies块和repositories块。  </p>
+<p>scala-lang下面还有一个scala-compiler包，官方例子上没有添加，应该是编译器，因为本地安装了scala，所以不用依赖了。</p>
+<p>dependencies 就是依赖，第三方库等。<br>因为不像Python第三方库都在pipy，所以通过repositories指定下载库的仓库。<br>通常会使用是MavenCenter。maven经过长时间运营，收录了几乎所有公开的库。</p>
+<h2 id="Application-plugin"><a href="#Application-plugin" class="headerlink" title="Application plugin"></a>Application plugin</h2><p>提一下Application 插件，Gradle没有提供scala application的模板，上面初始化项目用到的是scala library模板。  </p>
+<p>网上找到的解决方案是Application 插件。在官方模板java application中也用到了这个插件。</p>
+<h3 id="引入-application-plugin"><a href="#引入-application-plugin" class="headerlink" title="引入 application plugin"></a>引入 application plugin</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">plugins &#123;</span><br><span class="line">    id <span class="string">"application"</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">mainClassName = <span class="string">'projectName。className'</span></span><br></pre></td></tr></table></figure>
+
+<p>添加application插件是要定义<code>mainClassName</code>指定main函数所在class。</p>
+<h3 id="运行project"><a href="#运行project" class="headerlink" title="运行project"></a>运行project</h3><p>application plugin 添加了一个task <code>run</code>，这个task通过property<code>mainClassName</code>找到main函数所在class，并运行main函数。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew build</span></span><br><span class="line"><span class="meta">$</span><span class="bash"> ./gradlew run</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h2><p>后续还有通过main代码和test代码展示Gradle test功能的部分，因为我还不会scala的test，以后再补全，Gradle也还有其他很多功能，到用到的时候在补全吧。</p>
+
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>

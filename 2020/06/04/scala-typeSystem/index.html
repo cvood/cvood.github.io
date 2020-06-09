@@ -1,0 +1,221 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" class="loading">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>类型系统 - 风吟茶楼</title>
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="google" content="notranslate" />
+    <meta name="keywords" content="Fechin,"> 
+    <meta name="description" content="
+参数化多态性 粗略地说，就是泛型编程
+（局部）类型推断 粗略地说，就是为什么你不需要这样写代码val i: Int = 12: Int
+存在量化 粗略地说，为一些没有名称的类型进行定义
+视窗 我们,"> 
+    <meta name="author" content="Cvood"> 
+    <link rel="alternative" href="atom.xml" title="风吟茶楼" type="application/atom+xml"> 
+    <link rel="icon" href="/img/favicon.png"> 
+    
+    
+<link rel="stylesheet" href="/css/diaspora.css">
+
+	<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <script>
+         (adsbygoogle = window.adsbygoogle || []).push({
+              google_ad_client: "ca-pub-8691406134231910",
+              enable_page_level_ads: true
+         });
+    </script>
+    <script async custom-element="amp-auto-ads"
+        src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+    </script>
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body class="loading">
+    <span id="config-title" style="display:none">风吟茶楼</span>
+    <div id="loader"></div>
+    <div id="single">
+    <div id="top" style="display: block;">
+    <div class="bar" style="width: 0;"></div>
+    <a class="iconfont icon-home image-icon" href="javascript:;" data-url="https://cvood.github.io"></a>
+    <div title="播放/暂停" class="iconfont icon-play"></div>
+    <h3 class="subtitle">类型系统</h3>
+    <div class="social">
+        <div>
+            <div class="share">
+                <a title="获取二维码" class="iconfont icon-scan" href="javascript:;"></a>
+            </div>
+            <div id="qr"></div>
+        </div>
+    </div>
+    <div class="scrollbar"></div>
+</div>
+
+    <div class="section">
+        <div class="article">
+    <div class='main'>
+        <h1 class="title">类型系统</h1>
+        <div class="stuff">
+            <span>六月 04, 2020</span>
+            
+
+        </div>
+        <div class="content markdown">
+            <ul>
+<li>参数化多态性 粗略地说，就是泛型编程</li>
+<li>（局部）类型推断 粗略地说，就是为什么你不需要这样写代码val i: Int = 12: Int</li>
+<li>存在量化 粗略地说，为一些没有名称的类型进行定义</li>
+<li>视窗 我们将下周学习这些；粗略地说，就是将一种类型的值“强制转换”为另一种类型</li>
+</ul>
+<h1 id="参数化多态性"><a href="#参数化多态性" class="headerlink" title="参数化多态性"></a>参数化多态性</h1><p>多态性是在不影响静态类型丰富性的前提下，用来（给不同类型的值）编写通用代码的。（泛型编程）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">scala&gt;</span><span class="bash"> 2 :: 1 :: <span class="string">"bar"</span> :: <span class="string">"foo"</span> :: Nil</span></span><br><span class="line">res5: List[Any] = List(2, 1, bar, foo)</span><br><span class="line"><span class="meta">scala&gt;</span><span class="bash"> res5.head</span></span><br><span class="line">res6: Any = 2</span><br></pre></td></tr></table></figure>
+<p>多类型列表无法复原单个元素的类型。需要使用大量代码进行类型转化，且没有类型安全。</p>
+<p>实现多态性通过指定类型变量：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">scala&gt;</span><span class="bash"> def drop1[A](l: List[A]) = l.tail</span></span><br><span class="line">drop1: [A](l: List[A])List[A]</span><br><span class="line"></span><br><span class="line"><span class="meta">scala&gt;</span><span class="bash"> drop1(List(1,2,3))</span></span><br><span class="line">res1: List[Int] = List(2, 3)</span><br></pre></td></tr></table></figure>
+<p>[A]为类型变量。</p>
+<h1 id="rank-1-polymorphism"><a href="#rank-1-polymorphism" class="headerlink" title="rank-1 polymorphism"></a>rank-1 polymorphism</h1><p><code>def toList[A](a: A) = List(a)</code><br>编译能成功。<br><code>def foo[A, B](f: A =&gt; List[A], b: B) = f(b)</code><br>This does not compile, because all type variables have to be fixed at the invocation site<br>这个函数不能通过编译，因为所有类型变量只有在被调用时才能确定。<br><code>def foo[A](f: A =&gt; List[A], i: Int) = f(i)</code><br>即使固定了类型B,任然会得到一个type mismatch的错误。<br>原因是<code>f: A =&gt; List[A]</code>需要一个type为A的参数，而给与的参数type为B。<br>即使将B固定为Int，f任然需要A，所以需要一个Int到A的隐式转换。</p>
+<pre><code>入参具有rank-n类型，那么该函数就具有rank-(n+1)类型(来源：知乎，你好类型十)</code></pre><p>个人理解，因为scala 是rand-1，所以只能有一层的类型变量转换，所以入参为类型需要A的地方只能传入A。<br><code>def foo[A,B](f:A =&gt; List[A],a:A,b:B) = b::f(a)</code><br>能通过编译。因为b位置没有限制参数类型。</p>
+<h1 id="Variance-变性"><a href="#Variance-变性" class="headerlink" title="Variance-变性"></a>Variance-变性</h1><table>
+<thead>
+<tr>
+<th></th>
+<th>含义</th>
+<th align="right">Scala标记</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>协变covariant</td>
+<td>C[T’]是 C[T] 的子类</td>
+<td align="right">[+T]</td>
+</tr>
+<tr>
+<td>逆变contravariant</td>
+<td>C[T]是 C[T’]的子类</td>
+<td align="right">[-T]</td>
+</tr>
+<tr>
+<td>不变invariant</td>
+<td>C[T] 和 C[T’]无关</td>
+<td align="right">[T]</td>
+</tr>
+</tbody></table>
+<p>逆变的作用</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">trait</span> <span class="title">Function1</span> [-<span class="type">T1</span>, +<span class="type">R</span>] <span class="keyword">extends</span> <span class="title">AnyRef</span></span></span><br></pre></td></tr></table></figure>
+
+<p>函数特质定义中，入参为逆变，返回值为协变。</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">scala&gt; <span class="class"><span class="keyword">class</span> <span class="title">Animal</span> </span>&#123; <span class="keyword">val</span> sound = <span class="string">"rustle"</span> &#125;</span><br><span class="line">defined <span class="class"><span class="keyword">class</span> <span class="title">Animal</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">scala&gt;</span> <span class="title">class</span> <span class="title">Bird</span> <span class="keyword">extends</span> <span class="title">Animal</span> </span>&#123; <span class="keyword">override</span> <span class="keyword">val</span> sound = <span class="string">"call"</span> &#125;</span><br><span class="line">defined <span class="class"><span class="keyword">class</span> <span class="title">Bird</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">scala&gt;</span> <span class="title">class</span> <span class="title">Chicken</span> <span class="keyword">extends</span> <span class="title">Bird</span> </span>&#123; <span class="keyword">override</span> <span class="keyword">val</span> sound = <span class="string">"cluck"</span> &#125;</span><br><span class="line">defined <span class="class"><span class="keyword">class</span> <span class="title">Chicken</span></span></span><br><span class="line"><span class="class"></span></span><br><span class="line"><span class="class"><span class="title">scala&gt;</span> <span class="title">val</span> <span class="title">getTweet</span></span>: (<span class="type">Bird</span> =&gt; <span class="type">String</span>) = ((a: <span class="type">Animal</span>) =&gt; a.sound )</span><br><span class="line">getTweet: <span class="type">Bird</span> =&gt; <span class="type">String</span> = &lt;function1&gt;</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">val</span> hatch: (() =&gt; <span class="type">Bird</span>) = (() =&gt; <span class="keyword">new</span> <span class="type">Chicken</span> )</span><br><span class="line">hatch: () =&gt; <span class="type">Bird</span> = &lt;function0&gt;</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">var</span> a = hatch()</span><br><span class="line">a: <span class="type">Bird</span> = <span class="type">Chicken</span>@<span class="number">5e1</span>fa5b1</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">var</span> b = getTweet(<span class="keyword">new</span> <span class="type">Chicken</span>)</span><br><span class="line">b: <span class="type">String</span> = cluck</span><br><span class="line"></span><br><span class="line">scala&gt; <span class="keyword">var</span> c = getTweet(<span class="keyword">new</span> <span class="type">Animal</span>)</span><br><span class="line">&lt;console&gt;:<span class="number">14</span>: error: <span class="class"><span class="keyword">type</span> <span class="title">mismatch</span></span>;</span><br><span class="line"> found   : <span class="type">Animal</span></span><br><span class="line"> required: <span class="type">Bird</span></span><br><span class="line">       <span class="keyword">var</span> c = getTweet(<span class="keyword">new</span> <span class="type">Animal</span>)</span><br></pre></td></tr></table></figure>
+
+<p><code>getTweet</code>入参为逆变，类型为Bird，因此传入类型Chicken时编译成功，传入类型Animal时，编译失败。<br>这说明逆变的意义，定义一个函数，入参只要定义类型为超类，就能接收这个类的所有子类。也实现了超类可以被子类替换的原则。</p>
+<h1 id="边界-Bounds"><a href="#边界-Bounds" class="headerlink" title="边界-Bounds"></a>边界-Bounds</h1>
+            <!--[if lt IE 9]><script>document.createElement('audio');</script><![endif]-->
+            <audio id="audio" loop="1" preload="auto" controls="controls" data-autoplay="false">
+                <source type="audio/mpeg" src="">
+            </audio>
+            
+                <ul id="audio-list" style="display:none">
+                    
+                        
+                            <li title='0' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                        
+                            <li title='1' data-url='http://link.hhtjim.com/163/425570952.mp3'></li>
+                        
+                    
+                </ul>
+            
+        </div>
+        
+    <div id='gitalk-container' class="comment link"
+		data-enable='false'
+        data-ae='false'
+        data-ci=''
+        data-cs=''
+        data-r=''
+        data-o=''
+        data-a=''
+        data-d='false'
+    >查看评论</div>
+
+
+    </div>
+    
+</div>
+
+
+    </div>
+</div>
+</body>
+
+
+<script src="//lib.baomitu.com/jquery/1.8.3/jquery.min.js"></script>
+<script src="/js/plugin.js"></script>
+<script src="/js/typed.js"></script>
+<script src="/js/diaspora.js"></script>
+
+
+<link rel="stylesheet" href="/photoswipe/photoswipe.css">
+<link rel="stylesheet" href="/photoswipe/default-skin/default-skin.css">
+
+
+<script src="/photoswipe/photoswipe.min.js"></script>
+<script src="/photoswipe/photoswipe-ui-default.min.js"></script>
+
+
+<!-- Root element of PhotoSwipe. Must have class pswp. -->
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+    <!-- Background of PhotoSwipe. 
+         It's a separate element as animating opacity is faster than rgba(). -->
+    <div class="pswp__bg"></div>
+    <!-- Slides wrapper with overflow:hidden. -->
+    <div class="pswp__scroll-wrap">
+        <!-- Container that holds slides. 
+            PhotoSwipe keeps only 3 of them in the DOM to save memory.
+            Don't modify these 3 pswp__item elements, data is added later on. -->
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+        <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+        <div class="pswp__ui pswp__ui--hidden">
+            <div class="pswp__top-bar">
+                <!--  Controls are self-explanatory. Order can be changed. -->
+                <div class="pswp__counter"></div>
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+                <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                <!-- element will get class pswp__preloader--active when preloader is running -->
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                      <div class="pswp__preloader__cut">
+                        <div class="pswp__preloader__donut"></div>
+                      </div>
+                    </div>
+                </div>
+            </div>
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div> 
+            </div>
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+</html>
